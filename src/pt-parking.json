@@ -1,0 +1,12 @@
+{
+"type": "FeatureCollection",
+"name": "pt-parking",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "full_id": "w340065001", "osm_id": "340065001", "osm_type": "way", "amenity": "parking", "name": "Area Parkir Alun-Alun Utara", "parking": "", "industrial": "", "landuse": "", "surface": "" }, "geometry": { "type": "Point", "coordinates": [[ 110.827629544867122, -7.574586170565159 ]] } },
+{ "type": "Feature", "properties": { "full_id": "w340068734", "osm_id": "340068734", "osm_type": "way", "amenity": "parking", "name": "", "parking": "lane", "industrial": "", "landuse": "", "surface": "" }, "geometry": { "type": "Point", "coordinates": [[ 110.828311400977626, -7.573575881733313 ]] } },
+{ "type": "Feature", "properties": { "full_id": "w340069125", "osm_id": "340069125", "osm_type": "way", "amenity": "parking", "name": "", "parking": "lane", "industrial": "", "landuse": "", "surface": "" }, "geometry": { "type": "Point", "coordinates": [[ 110.82973973558326, -7.575031338895085 ]] } },
+{ "type": "Feature", "properties": { "full_id": "w410407850", "osm_id": "410407850", "osm_type": "way", "amenity": "parking", "name": "", "parking": "", "industrial": "", "landuse": "", "surface": "" }, "geometry": { "type": "Point", "coordinates": [[ 110.83247447702179, -7.571184291375751 ]] } },
+{ "type": "Feature", "properties": { "full_id": "w570449760", "osm_id": "570449760", "osm_type": "way", "amenity": "parking", "name": "Parkir PKT", "parking": "surface", "industrial": "scrap_yard", "landuse": "industrial", "surface": "paved" }, "geometry": { "type": "Point", "coordinates": [[ 110.819226357134156, -7.5510233637387 ]] } }
+]
+}
