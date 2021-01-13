@@ -124,13 +124,23 @@ const Maps = () => {
   }
 
   const [activeState, setActiveState] = React.useState(initialActiveState);
+  const [asf, setAsf] = React.useState(true);
 
   const bsRef = React.useRef(null);
   const snapPoints = React.useMemo(() => ['5%', '20%', '30%'], []);
   const nSnapPoints = 3;
 
+  const onIconPress = (name) => {
+    let nas = activeState;
+    nas[`${name}`] = !nas[`${name}`];
+
+    console.log(nas);
+    setActiveState(nas);
+    setAsf(!asf);
+  }
+
   const IconGrid = ({name, text, color}) => (
-    <View style={{margin: 8}}>
+    <View style={{margin: 8}} onTouchEndCapture={() => onIconPress(text)}>
       <Icon color={activeState[text] ? activeStateColor[text] : "gray"} name={name} size={36} />
       <Text style={{color: activeState[text] ? activeStateColor[text] : "gray"}} >{text}</Text>
     </View>
@@ -151,6 +161,19 @@ const Maps = () => {
     <View style={{width: 16}}></View>
   </>)
 
+  const Markey = React.useCallback(({as}) => (
+    <>
+      {keys.map(i => {  
+        if(!activeState[i]) return <></>;
+
+        return (<Markers as={activeState} point={activeStatePoint[i]} label={i} />) 
+      })}
+      
+      
+      <Circles as={activeState} points={keys.filter(i => activeState[i]).map(i =>  activeStatePoint[i])} radius={radius} />
+    </>
+  ), [asf, radius]);
+
   return (
     <>
     <MapView
@@ -168,14 +191,7 @@ const Maps = () => {
         fillColor="#0000ff22"
         strokeWidth={2}
       />
-      {keys.map(i => {  
-        if(!activeState[i]) return <></>;
-
-        return (<Markers point={activeStatePoint[i]} label={i} />) 
-      })}
-      
-      
-      <Circles points={keys.filter(i => activeState[i]).map(i =>  activeStatePoint[i])} radius={radius} />
+      <Markey as={activeState} />
     </MapView>
     <BottomSheet
         style={{position: "absolute"}}
