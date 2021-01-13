@@ -17,7 +17,9 @@ import PointParking from "./pt-parking.json";
 
 const { width, height } = Dimensions.get("window")
 
-const Circles = ({features, radius}) => {
+const Circles = ({points, radius}) => {
+  const features = points.map(i => i.features)
+
   let selectedFeature = [];
   let currentLength = 999;
   for (const feature of features) {
@@ -50,9 +52,15 @@ Circles.defaultProps = {
 
 const Markers = ({point, label, nested, identifiable}) => {
   let image;
+  let nnested = nested;
+  let nidentifiable = identifiable;
 
   switch(label.toLowerCase()) {
-    case 'mosque': image = require('./mosque.png'); break;
+    case 'mosque': 
+      image = require('./mosque.png'); 
+      nnested = false;
+      nidentifiable = false;
+      break;
     case 'police': image = require('./police.png'); break;
     case 'parking': image = require('./parking.png'); break;
     default: image = require('./marker.png');
@@ -62,18 +70,18 @@ const Markers = ({point, label, nested, identifiable}) => {
   <>
     {point.features.map((pt, index) => (
         <Marker key={index} 
-          title={identifiable ?  (pt.properties.name || label) : label}
+          title={nidentifiable ?  (pt.properties.name || label) : label}
           image={image}
           coordinate={{
-            latitude: nested ? pt.geometry.coordinates[0][1] : pt.geometry.coordinates[1], 
-            longitude: nested ? pt.geometry.coordinates[0][0] : pt.geometry.coordinates[0]}}/>
+            latitude: nnested ? pt.geometry.coordinates[0][1] : pt.geometry.coordinates[1], 
+            longitude: nnested ? pt.geometry.coordinates[0][0] : pt.geometry.coordinates[0]}}/>
       ))}
   </>
 )}
 
 Markers.defaultProps = {
-  nested: false,
-  identifiable: false,
+  nested: true,
+  identifiable: true,
 }
 
 const Heading = ({text, children, Next}) => (
@@ -86,22 +94,47 @@ const Heading = ({text, children, Next}) => (
   </View>
 );
 
-const IconGrid = ({name, text, color}) => (
-  <View style={{margin: 8}}>
-    <Icon color="gray" name={name} size={36} />
-    <Text style={{color: "gray"}} >{text}</Text>
-  </View>
-);
-
 const Maps = () => {
   const cityBox = CitySolo;
 
   const [radius, setRadius] = React.useState(100);
   const [drawerIdx, setDrawerIdx] = React.useState(2);
 
+  const keys = ["Gas", "Parking", "Mosque", "Police"];
+
+  const initialActiveState = {
+    "Gas": true,
+    "Parking": true,
+    "Mosque": true,
+    "Police": false,
+  }
+
+  const activeStateColor = {
+    "Gas": "red",
+    "Parking": "orange",
+    "Mosque": "green",
+    "Police": "black",
+  }
+
+  const activeStatePoint = {
+    "Gas": PointFuel,
+    "Parking": PointParking,
+    "Mosque": PointMosque,
+    "Police": PointPolice,
+  }
+
+  const [activeState, setActiveState] = React.useState(initialActiveState);
+
   const bsRef = React.useRef(null);
   const snapPoints = React.useMemo(() => ['5%', '20%', '30%'], []);
   const nSnapPoints = 3;
+
+  const IconGrid = ({name, text, color}) => (
+    <View style={{margin: 8}}>
+      <Icon color={activeState[text] ? activeStateColor[text] : "gray"} name={name} size={36} />
+      <Text style={{color: activeState[text] ? activeStateColor[text] : "gray"}} >{text}</Text>
+    </View>
+  );
 
   const NextRadius = () => (<>
     <Text style={styles.textHeadingNext}>{radius} m from centroid</Text>
@@ -135,12 +168,14 @@ const Maps = () => {
         fillColor="#0000ff22"
         strokeWidth={2}
       />
-      <Markers point={PointFuel} label="SPBU" nested identifiable />
-      <Markers point={PointMosque} label="Mosque" />
-      <Markers point={PointPolice} label="Police" nested identifiable />
-      <Markers point={PointParking} label="Parking" nested identifiable />
+      {keys.map(i => {  
+        if(!activeState[i]) return <></>;
+
+        return (<Markers point={activeStatePoint[i]} label={i} />) 
+      })}
       
-      <Circles features={[PointFuel.features, PointMosque.features]} radius={radius} />
+      
+      <Circles points={keys.filter(i => activeState[i]).map(i =>  activeStatePoint[i])} radius={radius} />
     </MapView>
     <BottomSheet
         style={{position: "absolute"}}
